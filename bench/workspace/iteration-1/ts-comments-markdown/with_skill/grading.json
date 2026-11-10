@@ -1,0 +1,96 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] xss-comments",
+      "passed": true,
+      "evidence": "(blocking) Stored XSS in comments: src/components/CommentList.tsx:19 ... `sanitize()` is skipped here, even though `Bio.tsx:6` in this same PR uses it"
+    },
+    {
+      "text": "Catches [major] javascript-url",
+      "passed": true,
+      "evidence": "(blocking) `[x](javascript:alert(1))` produces a `javascript:` href. `[x](\" onmouseover=\"\u2026)` breaks out of the `href` attribute."
+    },
+    {
+      "text": "Catches [major] effect-deps-regression",
+      "passed": true,
+      "evidence": "(blocking) Effect dropped `postId` dependency and cancellation ... the previous post's comments stay on screen under the new post ... an out-of-order response race comes back"
+    },
+    {
+      "text": "Catches [minor] key-index",
+      "passed": true,
+      "evidence": "(nit) `key={c.id}` was changed to `key={i}` with no stated reason. Revert it along with item 2."
+    },
+    {
+      "text": "Catches [minor] quadratic-unique",
+      "passed": true,
+      "evidence": "(should_fix) O(n\u00b2) dedupe on threads of several thousand comments ... Fix: `new Set(comments.map((c) => c.author.id)).size` and wrap it in `useMemo`"
+    },
+    {
+      "text": "Catches [minor] moment-dependency",
+      "passed": true,
+      "evidence": "(should_fix) New `moment` dependency duplicates `date-fns` ... `src/format.ts` already exports `relativeTime()`. `moment` is in maintenance mode"
+    },
+    {
+      "text": "Catches [minor] weak-tests",
+      "passed": true,
+      "evidence": "(should_fix) Tests cover only the happy path for bold ... no test covers italic, code, links, nesting, HTML escaping or `javascript:` links"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "xss-comments=blocking"
+    },
+    {
+      "text": "Does not flag decoy: bio-sanitized",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 237.2
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Italic applied before code spans mangles code (mis-nested tags) and literal HTML text in comments is now swallowed instead of shown as typed",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Participants component is not imported/rendered anywhere, so the feature never shows",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "\"1 people joined the discussion\" pluralization",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "renderMarkdown doc comment says comments-only and should warn output is unsafe until sanitized",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "'last reply' assumes oldest-first ordering from API",
+        "severity_given": "question"
+      }
+    ],
+    "nit_count": 4,
+    "actionability": 5,
+    "notes": "Finds every seeded issue with correct priorities (XSS and effect regression blocking), verified claims by running the regexes, gives file:line and concrete fixes, and adds real extras. Only quibble: key-index rated a nit, which is close to the key's minor severity anyway."
+  }
+}

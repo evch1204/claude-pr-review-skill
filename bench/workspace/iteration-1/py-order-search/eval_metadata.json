@@ -1,0 +1,5 @@
+{
+  "eval_name": "py-order-search",
+  "prompt": "Can you review this PR before I merge it? Branch `feature/order-search` into `main`.\nPR title: Order search, discount codes, and Stripe charging\nPR description: Adds `GET /orders/search?q=&page=` (paginated, 1-indexed pages), discount codes on the order detail endpoint, and a `charge()` helper for Stripe. Also moves the session secret to an env var.\n\nTesting: ran the service locally and searched for a few customers.",
+  "assertions": []
+}

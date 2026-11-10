@@ -1,0 +1,4 @@
+.DS_Store
+__pycache__/
+# raw benchmark runs (built fixture repos)
+bench/workspace/**/repo/

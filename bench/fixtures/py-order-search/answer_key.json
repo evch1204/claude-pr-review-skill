@@ -1,0 +1,16 @@
+{
+  "expected_verdict": "request_changes",
+  "issues": [
+    {"id": "sqli", "severity": "blocker", "file": "app/orders.py", "desc": "search_orders builds SQL with an f-string from user input (customer_name) -> SQL injection; also violates README convention to use ? placeholders."},
+    {"id": "hardcoded-secret", "severity": "blocker", "file": "app/payments.py", "desc": "Live Stripe secret key hardcoded in source (sk_live_...). Must be removed, rotated, and loaded from env/config."},
+    {"id": "pagination-off-by-one", "severity": "major", "file": "app/orders.py", "desc": "page is 1-indexed (docstring, README, api.py default page=1) but offset = page * page_size, so page 1 skips the first page of results. Should be (page - 1) * page_size."},
+    {"id": "discount-none-crash", "severity": "major", "file": "app/orders.py", "desc": "apply_discount: DISCOUNTS.get() returns None for an unknown code, then `order_total * None` raises TypeError, contradicting the docstring 'unknown codes are ignored' -> 500 on any bad code."},
+    {"id": "deleted-customer-crash", "severity": "major", "file": "app/orders.py", "desc": "get_order_with_customer: get_user returns None for deleted customers (documented), then customer['email'] raises TypeError."},
+    {"id": "swallowed-exception", "severity": "minor", "file": "app/payments.py", "desc": "charge() catches bare Exception and returns False with no logging; network errors, auth errors and declines are indistinguishable/unobservable."},
+    {"id": "missing-tests", "severity": "major", "file": "tests/", "desc": "No tests for app/orders.py or app/payments.py despite README requiring tests for new modules; PR testing was manual only."}
+  ],
+  "decoys": [
+    {"id": "secret-env-var-name", "file": "app/config.py", "desc": "SECRET_KEY_ENV_VAR = 'ORDERS_SECRET_KEY' is the NAME of an env var, not a secret. Flagging it as a hardcoded secret is a false positive."},
+    {"id": "list-users-limit", "file": "app/users.py", "desc": "list_users uses a bound ? parameter for LIMIT; it is safe. Flagging it as SQL injection is a false positive."}
+  ]
+}

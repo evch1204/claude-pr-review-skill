@@ -1,0 +1,1250 @@
+{
+  "metadata": {
+    "skill_name": "pr-review",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-11-10T18:27:35Z",
+    "evals_run": [
+      "js-clean-rate-limiter",
+      "node-transfer-messy-pr",
+      "py-order-search",
+      "ts-comments-markdown"
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": "js-clean-rate-limiter",
+      "eval_name": "js-clean-rate-limiter",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 128.1,
+        "tokens": 50778,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Verdict is approve",
+          "passed": true,
+          "evidence": "review verdict: approve"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "At most 3 nits on a clean PR",
+          "passed": true,
+          "evidence": "3 nits"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "node-transfer-messy-pr",
+      "eval_name": "node-transfer-messy-pr",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 16,
+        "failed": 0,
+        "total": 16,
+        "time_seconds": 237.6,
+        "tokens": 64673,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] idor",
+          "passed": true,
+          "evidence": "(blocking) No ownership check on the source account: `src/routes/transfers.js:23` ... never compares `owner_id` to `req.user.id`"
+        },
+        {
+          "text": "Catches [blocker] amount-validation",
+          "passed": true,
+          "evidence": "(blocking) Amount and destination are not validated ... `amount: -5000` ... `amount` is `\"100\"` or `1.5` ... reject `fromId === toId`"
+        },
+        {
+          "text": "Catches [blocker] race-no-transaction",
+          "passed": true,
+          "evidence": "(blocking) Balance check and the two UPDATEs run outside a transaction ... Both read the balance as 100, both pass the check, and the balance ends at -$100."
+        },
+        {
+          "text": "Catches [major] missing-csrf",
+          "passed": true,
+          "evidence": "(blocking) The state-changing route has no CSRF protection ... `session.js` documents the cookie as `sameSite=none`"
+        },
+        {
+          "text": "Catches [major] missing-account-crash",
+          "passed": true,
+          "evidence": "(blocking) An unhandled async error can crash the process ... `fromId` is unknown or missing. `from.rows[0].balance_cents` throws a TypeError; also: `toId` doesn't exist: the credit UPDATE matches 0 rows"
+        },
+        {
+          "text": "Catches [minor] unawaited-audit",
+          "passed": true,
+          "evidence": "(should_fix) The audit-log write is fire-and-forget ... isn't awaited and runs outside the transfer"
+        },
+        {
+          "text": "Catches [minor] unclear-helper",
+          "passed": true,
+          "evidence": "(should_fix) replace `proc(r, u, d, flag)` with a clearly named function ... `flag` is always `true`, so the `{ ok: true }` branch is dead code"
+        },
+        {
+          "text": "Catches [major] no-tests",
+          "passed": true,
+          "evidence": "(should_fix) The new route has no tests: `test/`"
+        },
+        {
+          "text": "Catches [minor] deps",
+          "passed": true,
+          "evidence": "(should_fix) `lodash` was added, but nothing requires it. express was bumped from `^4.19.2` to `^4.21.1`."
+        },
+        {
+          "text": "Catches [minor] unrelated-reformat",
+          "passed": true,
+          "evidence": "(should_fix) `format.js` was reformatted to 4-space indents, single quotes and no semicolons, with no behaviour change."
+        },
+        {
+          "text": "Catches [minor] pr-hygiene",
+          "passed": true,
+          "evidence": "(should_fix) The PR title, description and commits don't meet the repo's rules"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+        },
+        {
+          "text": "Does not flag decoy: parameterized-sql",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: random-uuid",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "py-order-search",
+      "eval_name": "py-order-search",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 12,
+        "failed": 0,
+        "total": 12,
+        "time_seconds": 276.5,
+        "tokens": 62450,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] sqli",
+          "passed": true,
+          "evidence": "(blocking) SQL injection in order search: `app/orders.py:11-15` The `q` parameter goes straight into the SQL through f-strings."
+        },
+        {
+          "text": "Catches [blocker] hardcoded-secret",
+          "passed": true,
+          "evidence": "(blocking) Live Stripe secret key committed: `app/payments.py:4` ... rotate the key in Stripe now"
+        },
+        {
+          "text": "Catches [major] pagination-off-by-one",
+          "passed": true,
+          "evidence": "(blocking) Pagination off by one: page 1 skips the first page: `app/orders.py:10` ... Fix: `offset = (page - 1) * page_size`"
+        },
+        {
+          "text": "Catches [major] discount-none-crash",
+          "passed": true,
+          "evidence": "(blocking) Unknown discount code crashes the order endpoint: `app/orders.py:23-24` ... `order_total * None` raises"
+        },
+        {
+          "text": "Catches [major] deleted-customer-crash",
+          "passed": true,
+          "evidence": "(should_fix) Order detail crashes when the customer was deleted: `app/orders.py:34-35`"
+        },
+        {
+          "text": "Catches [minor] swallowed-exception",
+          "passed": true,
+          "evidence": "(should_fix) `except Exception: return False` handles a decline, a network error, and a read timeout the same way"
+        },
+        {
+          "text": "Catches [major] missing-tests",
+          "passed": true,
+          "evidence": "(should_fix) No tests for the new modules: `app/orders.py`, `app/payments.py` The README says \"Every new module needs tests in `tests/`\"."
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "sqli=blocking, hardcoded-secret=blocking"
+        },
+        {
+          "text": "Does not flag decoy: secret-env-var-name",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: list-users-limit",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "ts-comments-markdown",
+      "eval_name": "ts-comments-markdown",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 237.2,
+        "tokens": 62526,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] xss-comments",
+          "passed": true,
+          "evidence": "(blocking) Stored XSS in comments: src/components/CommentList.tsx:19 ... `sanitize()` is skipped here, even though `Bio.tsx:6` in this same PR uses it"
+        },
+        {
+          "text": "Catches [major] javascript-url",
+          "passed": true,
+          "evidence": "(blocking) `[x](javascript:alert(1))` produces a `javascript:` href. `[x](\" onmouseover=\"…)` breaks out of the `href` attribute."
+        },
+        {
+          "text": "Catches [major] effect-deps-regression",
+          "passed": true,
+          "evidence": "(blocking) Effect dropped `postId` dependency and cancellation ... the previous post's comments stay on screen under the new post ... an out-of-order response race comes back"
+        },
+        {
+          "text": "Catches [minor] key-index",
+          "passed": true,
+          "evidence": "(nit) `key={c.id}` was changed to `key={i}` with no stated reason. Revert it along with item 2."
+        },
+        {
+          "text": "Catches [minor] quadratic-unique",
+          "passed": true,
+          "evidence": "(should_fix) O(n²) dedupe on threads of several thousand comments ... Fix: `new Set(comments.map((c) => c.author.id)).size` and wrap it in `useMemo`"
+        },
+        {
+          "text": "Catches [minor] moment-dependency",
+          "passed": true,
+          "evidence": "(should_fix) New `moment` dependency duplicates `date-fns` ... `src/format.ts` already exports `relativeTime()`. `moment` is in maintenance mode"
+        },
+        {
+          "text": "Catches [minor] weak-tests",
+          "passed": true,
+          "evidence": "(should_fix) Tests cover only the happy path for bold ... no test covers italic, code, links, nesting, HTML escaping or `javascript:` links"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "xss-comments=blocking"
+        },
+        {
+          "text": "Does not flag decoy: bio-sanitized",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "js-clean-rate-limiter",
+      "eval_name": "js-clean-rate-limiter",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "time_seconds": 130.5,
+        "tokens": 42752,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Verdict is approve",
+          "passed": false,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": false,
+          "evidence": "Backward wall-clock step stalls refill for the duration of the step: 'Must fix', 'an outage of up to an hour'; request changes until the default is a monotonic clock. — This is an intentional, commented design choice. It is conservative, so a forward jump can't mint tokens. The answer key allows a monotonic-clock suggestion only as an optional nit. Calling it must-fix and blocking a clean PR is a false positive under the clean-pr decoy. (Its side note that passing performance.now unbound throws on Node 20 is correct.)"
+        },
+        {
+          "text": "At most 3 nits on a clean PR",
+          "passed": false,
+          "evidence": "4 nits"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "node-transfer-messy-pr",
+      "eval_name": "node-transfer-messy-pr",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 16,
+        "failed": 0,
+        "total": 16,
+        "time_seconds": 130.8,
+        "tokens": 43872,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] idor",
+          "passed": true,
+          "evidence": "(blocking) No ownership check, so any user can drain any account ... nothing checks that `from.owner_id === req.user.id`"
+        },
+        {
+          "text": "Catches [blocker] amount-validation",
+          "passed": true,
+          "evidence": "(blocking) Amount isn't validated, and a negative amount reverses the transfer ... Zero, fractions, strings, `null` ... Also reject `fromId === toId` and missing IDs."
+        },
+        {
+          "text": "Catches [blocker] race-no-transaction",
+          "passed": true,
+          "evidence": "(blocking) Not atomic, so concurrent requests can double-spend and a failure loses money ... Use `db.withTransaction()` with `SELECT ... FOR UPDATE`"
+        },
+        {
+          "text": "Catches [major] missing-csrf",
+          "passed": true,
+          "evidence": "(blocking) No CSRF protection, and the session cookie is `SameSite=None`"
+        },
+        {
+          "text": "Catches [major] missing-account-crash",
+          "passed": true,
+          "evidence": "(blocking) Errors aren't handled, so bad input can crash the server ... an unknown `fromId`: `from.rows[0]` is `undefined`; also: Nonexistent `toId`: the credit `UPDATE` matches 0 rows silently"
+        },
+        {
+          "text": "Catches [minor] unawaited-audit",
+          "passed": true,
+          "evidence": "(blocking) Audit log write is fire-and-forget and outside the transfer ... isn't awaited"
+        },
+        {
+          "text": "Catches [minor] unclear-helper",
+          "passed": true,
+          "evidence": "(should_fix) The `proc` helper is hard to follow. `proc(r, u, d, flag)` has single-letter params, and `flag` is always `true`, so the `{ ok: true }` branch is dead code"
+        },
+        {
+          "text": "Catches [major] no-tests",
+          "passed": true,
+          "evidence": "(should_fix) No tests for the endpoint. `supertest` is already a devDependency."
+        },
+        {
+          "text": "Catches [minor] deps",
+          "passed": true,
+          "evidence": "(should_fix) Unused `lodash` dependency ... The express bump is unrelated ... in its own PR."
+        },
+        {
+          "text": "Catches [minor] unrelated-reformat",
+          "passed": true,
+          "evidence": "(should_fix) `src/utils/format.js` is a reformat only ... `CONTRIBUTING.md` says not to mix reformatting with features. Drop this commit."
+        },
+        {
+          "text": "Catches [minor] pr-hygiene",
+          "passed": true,
+          "evidence": "(should_fix) Commit messages (`wip`, `fix`, `more fixes`) and the PR title/description (\"updates\", empty) don't meet `CONTRIBUTING.md`"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+        },
+        {
+          "text": "Does not flag decoy: parameterized-sql",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: random-uuid",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "py-order-search",
+      "eval_name": "py-order-search",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 12,
+        "failed": 0,
+        "total": 12,
+        "time_seconds": 190.7,
+        "tokens": 45538,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] sqli",
+          "passed": true,
+          "evidence": "(blocking) SQL injection in `search_orders` (`app/orders.py:10-15`) The `q` value from the query string is pasted straight into the SQL with an f-string"
+        },
+        {
+          "text": "Catches [blocker] hardcoded-secret",
+          "passed": true,
+          "evidence": "(blocking) A live Stripe secret key is committed (`app/payments.py:4`) ... rotate the key in the Stripe dashboard now"
+        },
+        {
+          "text": "Catches [major] pagination-off-by-one",
+          "passed": true,
+          "evidence": "(blocking) Pages are off by one, so the first page is always skipped (`app/orders.py:10`)"
+        },
+        {
+          "text": "Catches [major] discount-none-crash",
+          "passed": true,
+          "evidence": "(blocking) An unknown discount code crashes the order endpoint (`app/orders.py:23-24`) ... raises `TypeError`"
+        },
+        {
+          "text": "Catches [major] deleted-customer-crash",
+          "passed": true,
+          "evidence": "(should_fix) Order detail crashes if the customer row is missing (`app/orders.py:35-36`)"
+        },
+        {
+          "text": "Catches [minor] swallowed-exception",
+          "passed": true,
+          "evidence": "(should_fix) `charge()` can't distinguish \"declined\" from \"we don't know\" ... `except Exception: return False` treats a timeout or network error the same as a declined card"
+        },
+        {
+          "text": "Catches [major] missing-tests",
+          "passed": true,
+          "evidence": "(should_fix) No tests for any of the new code. The README says \"Every new module needs tests in `tests/`.\""
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "sqli=blocking, hardcoded-secret=blocking"
+        },
+        {
+          "text": "Does not flag decoy: secret-env-var-name",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: list-users-limit",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "ts-comments-markdown",
+      "eval_name": "ts-comments-markdown",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 134.7,
+        "tokens": 42457,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] xss-comments",
+          "passed": true,
+          "evidence": "(blocking) Stored XSS: comment HTML is never sanitized ... `Bio.tsx` correctly wraps it in `sanitize(...)`, but `CommentList` doesn't."
+        },
+        {
+          "text": "Catches [major] javascript-url",
+          "passed": true,
+          "evidence": "(blocking) `[x](javascript:alert(1))` -> `<a href=\"javascript:alert(1\" …>` ... Allow only `http:`, `https:` and `mailto:` in link hrefs."
+        },
+        {
+          "text": "Catches [major] effect-deps-regression",
+          "passed": true,
+          "evidence": "(blocking) With `[]`, changing `postId` ... never refetches ... Without the cancellation guard, a slow response for an earlier post can overwrite a newer one"
+        },
+        {
+          "text": "Catches [minor] key-index",
+          "passed": true,
+          "evidence": "(should_fix) `key={i}` replaces `key={c.id}` ... Index keys make React reuse the wrong `<li>` when comments are inserted, deleted or reordered"
+        },
+        {
+          "text": "Catches [minor] quadratic-unique",
+          "passed": true,
+          "evidence": "(should_fix) `Participants` is O(n²) ... At 5,000 comments that's up to about 12.5M comparisons, and it runs on every render. Use a Set"
+        },
+        {
+          "text": "Catches [minor] moment-dependency",
+          "passed": true,
+          "evidence": "(should_fix) New `moment` dependency, even though `date-fns` already covers this ... Use `relativeTime(last.createdAt)` and drop `moment`"
+        },
+        {
+          "text": "Catches [minor] weak-tests",
+          "passed": true,
+          "evidence": "(nit) The test barely covers anything. It only checks bold. ... the most important tests are the security ones"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "xss-comments=blocking"
+        },
+        {
+          "text": "Does not flag decoy: bio-sanitized",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "js-clean-rate-limiter",
+      "eval_name": "js-clean-rate-limiter",
+      "configuration": "anthropic_code_review",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 116.1,
+        "tokens": 44663,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Verdict is approve",
+          "passed": true,
+          "evidence": "review verdict: approve"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "At most 3 nits on a clean PR",
+          "passed": true,
+          "evidence": "0 nits"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "node-transfer-messy-pr",
+      "eval_name": "node-transfer-messy-pr",
+      "configuration": "anthropic_code_review",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.94,
+        "passed": 15,
+        "failed": 1,
+        "total": 16,
+        "time_seconds": 166.2,
+        "tokens": 50466,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] idor",
+          "passed": true,
+          "evidence": "(blocking) Any logged-in user can move money out of any account. ... nothing checks `account.owner_id === req.user.id`"
+        },
+        {
+          "text": "Catches [blocker] amount-validation",
+          "passed": true,
+          "evidence": "(blocking) The amount is never checked, so a negative amount reverses the transfer ... The route should require a positive integer number of cents."
+        },
+        {
+          "text": "Catches [blocker] race-no-transaction",
+          "passed": true,
+          "evidence": "(blocking) The check and the two balance updates are not in a transaction ... two transfers sent at the same time can both pass the funds check and overdraw the account"
+        },
+        {
+          "text": "Catches [major] missing-csrf",
+          "passed": true,
+          "evidence": "(blocking) No CSRF protection on a route that changes data ... the session cookie is `sameSite=none`"
+        },
+        {
+          "text": "Catches [major] missing-account-crash",
+          "passed": true,
+          "evidence": "(blocking) A bad `fromId` can crash the server process ... `from.rows[0]` is `undefined`; also: a `toId` that doesn't exist makes the credit UPDATE change 0 rows"
+        },
+        {
+          "text": "Catches [minor] unawaited-audit",
+          "passed": true,
+          "evidence": "(blocking) The audit-log `db.query(...)` in `proc()` (L11) has the same problem: it is not awaited, so if it fails it also becomes an unhandled rejection."
+        },
+        {
+          "text": "Catches [minor] unclear-helper",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Catches [major] no-tests",
+          "passed": true,
+          "evidence": "(nit) No tests were added for the new endpoint. (under 'Smaller CONTRIBUTING violations')"
+        },
+        {
+          "text": "Catches [minor] deps",
+          "passed": true,
+          "evidence": "(nit) `lodash` is added to `package.json` but nothing imports it. The `express` bump has nothing to do with transfers."
+        },
+        {
+          "text": "Catches [minor] unrelated-reformat",
+          "passed": true,
+          "evidence": "(nit) Reformatting mixed into a feature PR: the `src/utils/format.js` diff only changes formatting"
+        },
+        {
+          "text": "Catches [minor] pr-hygiene",
+          "passed": true,
+          "evidence": "(nit) the commits are named `wip`, `fix` and `more fixes`, the title is \"updates\" and the description is empty"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+        },
+        {
+          "text": "Does not flag decoy: parameterized-sql",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: random-uuid",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "py-order-search",
+      "eval_name": "py-order-search",
+      "configuration": "anthropic_code_review",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.83,
+        "passed": 10,
+        "failed": 2,
+        "total": 12,
+        "time_seconds": 156.1,
+        "tokens": 48458,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] sqli",
+          "passed": true,
+          "evidence": "(none) SQL injection in order search. `app/orders.py:11-15` ... Searching `zzz' OR 1=1 --` returned all 25 rows"
+        },
+        {
+          "text": "Catches [blocker] hardcoded-secret",
+          "passed": true,
+          "evidence": "(none) A live Stripe secret key is committed. `app/payments.py:4` ... rotate the key in Stripe and load it from an env var"
+        },
+        {
+          "text": "Catches [major] pagination-off-by-one",
+          "passed": true,
+          "evidence": "(none) Page 1 skips the first page of results. `app/orders.py:10` ... Fix: `offset = (page - 1) * page_size`"
+        },
+        {
+          "text": "Catches [major] discount-none-crash",
+          "passed": true,
+          "evidence": "(none) `apply_discount(100.0, \"BOGUS\")` raises `TypeError`, so `GET` order detail with any mistyped `?code=` gives a 500"
+        },
+        {
+          "text": "Catches [major] deleted-customer-crash",
+          "passed": true,
+          "evidence": "(none) Order detail crashes when the customer no longer exists. `app/orders.py:34-35` ... `customer[\"email\"]` then raises `TypeError`"
+        },
+        {
+          "text": "Catches [minor] swallowed-exception",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Catches [major] missing-tests",
+          "passed": true,
+          "evidence": "(nit) These fell below the bar for findings and were left out of the list: ... `app/orders.py` and `app/payments.py` have no tests; the README asks for tests for every new module."
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": false,
+          "evidence": "sqli=none, hardcoded-secret=none"
+        },
+        {
+          "text": "Does not flag decoy: secret-env-var-name",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: list-users-limit",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "ts-comments-markdown",
+      "eval_name": "ts-comments-markdown",
+      "configuration": "anthropic_code_review",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.45,
+        "passed": 5,
+        "failed": 6,
+        "total": 11,
+        "time_seconds": 142.4,
+        "tokens": 46015,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] xss-comments",
+          "passed": true,
+          "evidence": "(none) Stored XSS in comment bodies. `CommentList` puts `renderMarkdown(c.body)` straight into `dangerouslySetInnerHTML` without calling `sanitize()`. (bug / security)"
+        },
+        {
+          "text": "Catches [major] javascript-url",
+          "passed": true,
+          "evidence": "(none) So does a link like `[click](javascript:alert(1))`, or a URL with a `\"` in it that breaks out of the `href` attribute."
+        },
+        {
+          "text": "Catches [major] effect-deps-regression",
+          "passed": true,
+          "evidence": "(none) The effect's dependency array went from `[postId]` to `[]` ... The `cancelled` guard was also removed ... This is a regression from the code on `main`. (bug)"
+        },
+        {
+          "text": "Catches [minor] key-index",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Catches [minor] quadratic-unique",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Catches [minor] moment-dependency",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Catches [minor] weak-tests",
+          "passed": false,
+          "evidence": "(none)"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": false,
+          "evidence": "xss-comments=none"
+        },
+        {
+          "text": "Does not flag decoy: bio-sanitized",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": false,
+          "evidence": "review verdict: none"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "js-clean-rate-limiter",
+      "eval_name": "js-clean-rate-limiter",
+      "configuration": "spillwave",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "time_seconds": 190.1,
+        "tokens": 61111,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Verdict is approve",
+          "passed": false,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": false,
+          "evidence": "Default Date.now plus the `t <= lastRefill` guard stalls refill for the length of a backward clock step; must switch to a monotonic clock before merge (Important / Request Changes). — The stall is real, but the code does it on purpose and the comment documents it (keep the high-water mark so a forward jump can't grant unearned tokens). It only matters on large wall-clock steps; NTP normally slews small offsets. The answer key lists the monotonic-clock/performance.now idea as an acceptable optional suggestion only. Raising it to should-fix and blocking a clean PR is a false positive under the clean-pr decoy."
+        },
+        {
+          "text": "At most 3 nits on a clean PR",
+          "passed": false,
+          "evidence": "8 nits"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "node-transfer-messy-pr",
+      "eval_name": "node-transfer-messy-pr",
+      "configuration": "spillwave",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 16,
+        "failed": 0,
+        "total": 16,
+        "time_seconds": 190.8,
+        "tokens": 63565,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] idor",
+          "passed": true,
+          "evidence": "(blocking) Security: No ownership check, so any user can move money out of any account ... `fromId` comes straight from the request body and is debited without checking `account.owner_id === req.user.id`"
+        },
+        {
+          "text": "Catches [blocker] amount-validation",
+          "passed": true,
+          "evidence": "(blocking) `amount` is never validated, and a negative amount reverses the transfer ... Fractional amount (`0.5`), zero, strings ... `fromId === toId`: not rejected"
+        },
+        {
+          "text": "Catches [blocker] race-no-transaction",
+          "passed": true,
+          "evidence": "(blocking) Check then update with no transaction or lock (race condition and partial writes) ... `CONTRIBUTING.md` says: \"Multi-statement writes must use `db.withTransaction()`\""
+        },
+        {
+          "text": "Catches [major] missing-csrf",
+          "passed": true,
+          "evidence": "(blocking) Security: The route has no CSRF protection ... `session.js` says the cookie is `sameSite=none`"
+        },
+        {
+          "text": "Catches [major] missing-account-crash",
+          "passed": true,
+          "evidence": "(blocking) Errors are never caught, so any logged-in user can crash the server ... `fromId` that doesn't exist: `from.rows[0]` is `undefined`, so `.balance_cents` throws a `TypeError`; also: `toId` that doesn't exist: the credit `UPDATE` matches 0 rows ... the money disappears"
+        },
+        {
+          "text": "Catches [minor] unawaited-audit",
+          "passed": true,
+          "evidence": "(blocking) The audit log write isn't awaited, isn't in the transaction, and can crash the server"
+        },
+        {
+          "text": "Catches [minor] unclear-helper",
+          "passed": true,
+          "evidence": "(should_fix) Readability: `proc(r, u, d, flag)` is hard to follow and has a dead branch ... `flag` is always `true` at the only call site"
+        },
+        {
+          "text": "Catches [major] no-tests",
+          "passed": true,
+          "evidence": "(should_fix) Testing: The new endpoint has no tests"
+        },
+        {
+          "text": "Catches [minor] deps",
+          "passed": true,
+          "evidence": "(should_fix) Dependencies: Unused `lodash` added, and an unrelated `express` bump"
+        },
+        {
+          "text": "Catches [minor] unrelated-reformat",
+          "passed": true,
+          "evidence": "(should_fix) PR Scope / Style: `src/utils/format.js` reformatted to a style the rest of the codebase doesn't use"
+        },
+        {
+          "text": "Catches [minor] pr-hygiene",
+          "passed": true,
+          "evidence": "(should_fix) The title is \"updates\", the description is empty, and the commits are `wip`, `fix` and `more fixes`"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+        },
+        {
+          "text": "Does not flag decoy: parameterized-sql",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: random-uuid",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "py-order-search",
+      "eval_name": "py-order-search",
+      "configuration": "spillwave",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 12,
+        "failed": 0,
+        "total": 12,
+        "time_seconds": 219.2,
+        "tokens": 63114,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] sqli",
+          "passed": true,
+          "evidence": "(blocking) Security: SQL injection in order search ... **File**: `app/orders.py:13` ... `q=zzz' OR 1=1 --` returns every order."
+        },
+        {
+          "text": "Catches [blocker] hardcoded-secret",
+          "passed": true,
+          "evidence": "(blocking) Security: Live Stripe secret key hardcoded and committed ... `app/payments.py:4` ... roll it in the Stripe dashboard now"
+        },
+        {
+          "text": "Catches [major] pagination-off-by-one",
+          "passed": true,
+          "evidence": "(blocking) Functionality: Off-by-one pagination skips the first page ... `offset = page * page_size`"
+        },
+        {
+          "text": "Catches [major] discount-none-crash",
+          "passed": true,
+          "evidence": "(blocking) Unknown discount code crashes order detail (500) ... `apply_discount(100.0, \"BOGUS\")` gives `TypeError`"
+        },
+        {
+          "text": "Catches [major] deleted-customer-crash",
+          "passed": true,
+          "evidence": "(should_fix) Order detail crashes when the customer was deleted ... `app/orders.py:35`"
+        },
+        {
+          "text": "Catches [minor] swallowed-exception",
+          "passed": true,
+          "evidence": "(should_fix) `charge()` hides failures and can double-charge on retry ... Nothing is logged either, so failures can't be diagnosed."
+        },
+        {
+          "text": "Catches [major] missing-tests",
+          "passed": true,
+          "evidence": "(should_fix) Testing: No tests for any new module ... The README says \"Every new module needs tests in `tests/`\"."
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "sqli=blocking, hardcoded-secret=blocking"
+        },
+        {
+          "text": "Does not flag decoy: secret-env-var-name",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Does not flag decoy: list-users-limit",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "ts-comments-markdown",
+      "eval_name": "ts-comments-markdown",
+      "configuration": "spillwave",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 177.2,
+        "tokens": 60943,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Catches [blocker] xss-comments",
+          "passed": true,
+          "evidence": "(blocking) Security: Stored XSS. Comment markdown is rendered as HTML without sanitizing ... File: src/components/CommentList.tsx:19"
+        },
+        {
+          "text": "Catches [major] javascript-url",
+          "passed": true,
+          "evidence": "(blocking) `[x](javascript:alert(1))` -> `<a href=\"javascript:alert(1\" ...>` (`javascript:` URL scheme passes through) ... allow only `http:`, `https:` and `mailto:` link targets"
+        },
+        {
+          "text": "Catches [major] effect-deps-regression",
+          "passed": true,
+          "evidence": "(blocking) `useEffect` lost its `postId` dependency and its cancellation guard ... it never refetches ... a slow response can arrive after unmount or after a newer request and overwrite state"
+        },
+        {
+          "text": "Catches [minor] key-index",
+          "passed": true,
+          "evidence": "(should_fix) List items are keyed by index instead of `c.id` ... React will reuse the wrong DOM nodes"
+        },
+        {
+          "text": "Catches [minor] quadratic-unique",
+          "passed": true,
+          "evidence": "(should_fix) Performance: O(n²) participant de-dupe on threads with thousands of comments ... Count unique authors with a Set ... memoize"
+        },
+        {
+          "text": "Catches [minor] moment-dependency",
+          "passed": true,
+          "evidence": "(should_fix) `moment` added even though `date-fns` and a helper already exist ... use `relativeTime(last.createdAt)`"
+        },
+        {
+          "text": "Catches [minor] weak-tests",
+          "passed": true,
+          "evidence": "(should_fix) One happy-path test for a security-sensitive renderer ... Nothing covers italic, code, links, newlines ... or HTML/XSS input"
+        },
+        {
+          "text": "Rates every answer-key blocker as blocking",
+          "passed": true,
+          "evidence": "xss-comments=blocking"
+        },
+        {
+          "text": "Does not flag decoy: bio-sanitized",
+          "passed": true,
+          "evidence": ""
+        },
+        {
+          "text": "Verdict is request_changes",
+          "passed": true,
+          "evidence": "review verdict: request_changes"
+        },
+        {
+          "text": "No false positives rated should-fix or higher",
+          "passed": true,
+          "evidence": ""
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 219.85,
+        "stddev": 63.8837,
+        "min": 128.1,
+        "max": 276.5
+      },
+      "tokens": {
+        "mean": 60106.75,
+        "stddev": 6303.9619,
+        "min": 50778,
+        "max": 64673
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.75,
+        "stddev": 0.5,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 146.675,
+        "stddev": 29.4123,
+        "min": 130.5,
+        "max": 190.7
+      },
+      "tokens": {
+        "mean": 43654.75,
+        "stddev": 1395.635,
+        "min": 42457,
+        "max": 45538
+      }
+    },
+    "anthropic_code_review": {
+      "pass_rate": {
+        "mean": 0.805,
+        "stddev": 0.2469,
+        "min": 0.45,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 145.2,
+        "stddev": 21.7137,
+        "min": 116.1,
+        "max": 166.2
+      },
+      "tokens": {
+        "mean": 47400.5,
+        "stddev": 2577.4091,
+        "min": 44663,
+        "max": 50466
+      }
+    },
+    "spillwave": {
+      "pass_rate": {
+        "mean": 0.75,
+        "stddev": 0.5,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 194.325,
+        "stddev": 17.7229,
+        "min": 177.2,
+        "max": 219.2
+      },
+      "tokens": {
+        "mean": 62183.25,
+        "stddev": 1349.5022,
+        "min": 60943,
+        "max": 63565
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.25",
+      "time_seconds": "+73.2",
+      "tokens": "+16452"
+    }
+  },
+  "notes": []
+}

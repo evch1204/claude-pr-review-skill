@@ -1,0 +1,88 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] xss-comments",
+      "passed": true,
+      "evidence": "(blocking) Stored XSS: comment HTML is not sanitized: `src/components/CommentList.tsx:19` `renderMarkdown` doesn't escape its input, and `CommentList` puts its output straight into `dangerouslySetInnerHTML`."
+    },
+    {
+      "text": "Catches [major] javascript-url",
+      "passed": true,
+      "evidence": "(blocking) `[x](javascript:alert(1))` and `[x](\" onmouseover=\"alert(1))` also produce a live `javascript:` link and an injected event attribute"
+    },
+    {
+      "text": "Catches [major] effect-deps-regression",
+      "passed": true,
+      "evidence": "(blocking) Fetch effect regressed: stale and mismatched comments ... The old effect re-ran on `[postId]` and ignored stale responses through a `cancelled` flag. The new one is ... with `[]`."
+    },
+    {
+      "text": "Catches [minor] key-index",
+      "passed": true,
+      "evidence": "(nit) `src/components/CommentList.tsx:16-17`: the list key changed from `c.id` to the array index for no stated reason ... Go back to `key={c.id}`."
+    },
+    {
+      "text": "Catches [minor] quadratic-unique",
+      "passed": true,
+      "evidence": "(should_fix) O(n\u00b2) participant count on large threads: `src/components/Participants.tsx:6-8` ... Fix: `new Set(comments.map((c) => c.author.id)).size`"
+    },
+    {
+      "text": "Catches [minor] moment-dependency",
+      "passed": true,
+      "evidence": "(should_fix) New `moment` dependency duplicates `date-fns` ... drop `moment` and use `relativeTime(last.createdAt)`."
+    },
+    {
+      "text": "Catches [minor] weak-tests",
+      "passed": true,
+      "evidence": "(should_fix) Tests cover only the happy path ... nothing covers hostile input."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "xss-comments=blocking"
+    },
+    {
+      "text": "Does not flag decoy: bio-sanitized",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 208.9
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Participants component is never rendered anywhere (verified: no usage in src), so the advertised participants line does not appear",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Italic rule runs before code-span rule, so `2*3*4` inside backticks renders as <code>2<em>3</em>4</code> (verified against the regex order)",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Participants assumes comments are ordered oldest-first for 'last reply'",
+        "severity_given": "question"
+      }
+    ],
+    "nit_count": 1,
+    "actionability": 5,
+    "notes": "Catches every seeded issue, including the javascript: href and attribute breakout inside the XSS finding, does not flag the sanitized Bio decoy, and adds two real verified extras (Participants never wired up, markdown applied inside code spans). Severities are slightly elevated for the minor items (should_fix vs minor) but the blocking/should-fix split is clear and every finding has a location and fix."
+  }
+}

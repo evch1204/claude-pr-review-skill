@@ -1,0 +1,58 @@
+{
+  "expectations": [
+    {
+      "text": "Verdict is approve",
+      "passed": false,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": false,
+      "evidence": "Backward wall-clock step stalls refill for the duration of the step: 'Must fix', 'an outage of up to an hour'; request changes until the default is a monotonic clock. \u2014 This is an intentional, commented design choice. It is conservative, so a forward jump can't mint tokens. The answer key allows a monotonic-clock suggestion only as an optional nit. Calling it must-fix and blocking a clean PR is a false positive under the clean-pr decoy. (Its side note that passing performance.now unbound throws on Node 20 is correct.)"
+    },
+    {
+      "text": "At most 3 nits on a clean PR",
+      "passed": false,
+      "evidence": "4 nits"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 3,
+    "total": 3,
+    "pass_rate": 0.0
+  },
+  "timing": {
+    "total_duration_seconds": 130.5
+  },
+  "grader": {
+    "false_positives": [
+      {
+        "claim": "Backward wall-clock step stalls refill for the duration of the step: 'Must fix', 'an outage of up to an hour'; request changes until the default is a monotonic clock.",
+        "severity_given": "blocking",
+        "why_wrong": "This is an intentional, commented design choice. It is conservative, so a forward jump can't mint tokens. The answer key allows a monotonic-clock suggestion only as an optional nit. Calling it must-fix and blocking a clean PR is a false positive under the clean-pr decoy. (Its side note that passing performance.now unbound throws on Node 20 is correct.)"
+      }
+    ],
+    "valid_extras": [
+      {
+        "desc": "tryRemove(n) with n > capacity returns false forever; throw RangeError or document it",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Add an msUntil(n) helper so callers know how long to wait (follow-up)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "new TokenBucket() with no args throws a destructuring TypeError instead of RangeError; default the parameter to {} (checked)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "tokens/lastRefill/now are public writable fields; b.tokens can be stale",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 4,
+    "actionability": 2,
+    "notes": "Well-reasoned, accurate code checks (the performance.now binding caveat and the no-argument TypeError are both correct). But it labels a deliberate design tradeoff 'Must fix' and asks for changes on a clean PR, which sends the author the wrong merge signal."
+  }
+}

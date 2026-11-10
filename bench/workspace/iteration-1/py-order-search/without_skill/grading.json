@@ -1,0 +1,113 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] sqli",
+      "passed": true,
+      "evidence": "(blocking) SQL injection in `search_orders` (`app/orders.py:10-15`) The `q` value from the query string is pasted straight into the SQL with an f-string"
+    },
+    {
+      "text": "Catches [blocker] hardcoded-secret",
+      "passed": true,
+      "evidence": "(blocking) A live Stripe secret key is committed (`app/payments.py:4`) ... rotate the key in the Stripe dashboard now"
+    },
+    {
+      "text": "Catches [major] pagination-off-by-one",
+      "passed": true,
+      "evidence": "(blocking) Pages are off by one, so the first page is always skipped (`app/orders.py:10`)"
+    },
+    {
+      "text": "Catches [major] discount-none-crash",
+      "passed": true,
+      "evidence": "(blocking) An unknown discount code crashes the order endpoint (`app/orders.py:23-24`) ... raises `TypeError`"
+    },
+    {
+      "text": "Catches [major] deleted-customer-crash",
+      "passed": true,
+      "evidence": "(should_fix) Order detail crashes if the customer row is missing (`app/orders.py:35-36`)"
+    },
+    {
+      "text": "Catches [minor] swallowed-exception",
+      "passed": true,
+      "evidence": "(should_fix) `charge()` can't distinguish \"declined\" from \"we don't know\" ... `except Exception: return False` treats a timeout or network error the same as a declined card"
+    },
+    {
+      "text": "Catches [major] missing-tests",
+      "passed": true,
+      "evidence": "(should_fix) No tests for any of the new code. The README says \"Every new module needs tests in `tests/`.\""
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "sqli=blocking, hardcoded-secret=blocking"
+    },
+    {
+      "text": "Does not flag decoy: secret-env-var-name",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: list-users-limit",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 190.7
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "No Idempotency-Key on charge(), retries after timeout can double-charge; body not URL-encoded",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "page not validated (non-numeric -> ValueError, negative offset errors on Postgres)",
+        "severity_given": "blocking"
+      },
+      {
+        "desc": "SECRET_KEY change doesn't match PR description; unused constant with risky empty default",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "New endpoints expose customer PII without auth check (confirm intended)",
+        "severity_given": "question"
+      },
+      {
+        "desc": "Money as floats",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Hard-coded discount codes require deploys",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Unrelated list_users change",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Handlers never close DB connections (pattern extended by PR)",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 5,
+    "actionability": 5,
+    "notes": "Found all 7 issues with sensible severities, clear 'Don't merge yet' verdict, located findings with verified reproductions and code fixes, and a merge checklist at the end; no false positives. Somewhat longer than needed but well organized."
+  }
+}

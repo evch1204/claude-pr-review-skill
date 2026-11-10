@@ -1,0 +1,113 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] sqli",
+      "passed": true,
+      "evidence": "(blocking) Security: SQL injection in order search ... **File**: `app/orders.py:13` ... `q=zzz' OR 1=1 --` returns every order."
+    },
+    {
+      "text": "Catches [blocker] hardcoded-secret",
+      "passed": true,
+      "evidence": "(blocking) Security: Live Stripe secret key hardcoded and committed ... `app/payments.py:4` ... roll it in the Stripe dashboard now"
+    },
+    {
+      "text": "Catches [major] pagination-off-by-one",
+      "passed": true,
+      "evidence": "(blocking) Functionality: Off-by-one pagination skips the first page ... `offset = page * page_size`"
+    },
+    {
+      "text": "Catches [major] discount-none-crash",
+      "passed": true,
+      "evidence": "(blocking) Unknown discount code crashes order detail (500) ... `apply_discount(100.0, \"BOGUS\")` gives `TypeError`"
+    },
+    {
+      "text": "Catches [major] deleted-customer-crash",
+      "passed": true,
+      "evidence": "(should_fix) Order detail crashes when the customer was deleted ... `app/orders.py:35`"
+    },
+    {
+      "text": "Catches [minor] swallowed-exception",
+      "passed": true,
+      "evidence": "(should_fix) `charge()` hides failures and can double-charge on retry ... Nothing is logged either, so failures can't be diagnosed."
+    },
+    {
+      "text": "Catches [major] missing-tests",
+      "passed": true,
+      "evidence": "(should_fix) Testing: No tests for any new module ... The README says \"Every new module needs tests in `tests/`\"."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "sqli=blocking, hardcoded-secret=blocking"
+    },
+    {
+      "text": "Does not flag decoy: secret-env-var-name",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: list-users-limit",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 219.2
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Handlers don't validate page/id input: 500 instead of 400",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "No Idempotency-Key on charge(); body not URL-encoded",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "SECRET_KEY silently defaults to empty string; fail fast",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Unrelated list_users change / mixed commit",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Hardcoded discount codes",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Money calculated in floats",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "DB connections never closed",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Endpoints expose PII with no auth check",
+        "severity_given": "question"
+      }
+    ],
+    "nit_count": 9,
+    "actionability": 4,
+    "notes": "Found all 7 issues with correct verdict and accurate, verified details and no false positives, but it is very long for an 86-line PR (templated PR info, 4 future suggestions, positive notes), and it lists tests as 'Important' while also putting them in 'Required before merge', which dilutes the signal."
+  }
+}

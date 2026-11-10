@@ -1,0 +1,5 @@
+{
+  "eval_name": "node-transfer-messy-pr",
+  "prompt": "Can you review this PR before I merge it? Branch `transfers` into `main`.\nPR title: updates\nPR description: (empty)",
+  "assertions": []
+}

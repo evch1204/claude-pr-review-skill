@@ -1,0 +1,93 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] sqli",
+      "passed": true,
+      "evidence": "(none) SQL injection in order search. `app/orders.py:11-15` ... Searching `zzz' OR 1=1 --` returned all 25 rows"
+    },
+    {
+      "text": "Catches [blocker] hardcoded-secret",
+      "passed": true,
+      "evidence": "(none) A live Stripe secret key is committed. `app/payments.py:4` ... rotate the key in Stripe and load it from an env var"
+    },
+    {
+      "text": "Catches [major] pagination-off-by-one",
+      "passed": true,
+      "evidence": "(none) Page 1 skips the first page of results. `app/orders.py:10` ... Fix: `offset = (page - 1) * page_size`"
+    },
+    {
+      "text": "Catches [major] discount-none-crash",
+      "passed": true,
+      "evidence": "(none) `apply_discount(100.0, \"BOGUS\")` raises `TypeError`, so `GET` order detail with any mistyped `?code=` gives a 500"
+    },
+    {
+      "text": "Catches [major] deleted-customer-crash",
+      "passed": true,
+      "evidence": "(none) Order detail crashes when the customer no longer exists. `app/orders.py:34-35` ... `customer[\"email\"]` then raises `TypeError`"
+    },
+    {
+      "text": "Catches [minor] swallowed-exception",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Catches [major] missing-tests",
+      "passed": true,
+      "evidence": "(nit) These fell below the bar for findings and were left out of the list: ... `app/orders.py` and `app/payments.py` have no tests; the README asks for tests for every new module."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": false,
+      "evidence": "sqli=none, hardcoded-secret=none"
+    },
+    {
+      "text": "Does not flag decoy: secret-env-var-name",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: list-users-limit",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 2,
+    "total": 12,
+    "pass_rate": 0.83
+  },
+  "timing": {
+    "total_duration_seconds": 156.1
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "SECRET_KEY defaults to \"\" when the env var is unset (mentioned as below the bar)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "charge() does not URL-encode its form body (mentioned as below the bar)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "int(params[\"page\"]) fails on non-numeric input (mentioned as below the bar)",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 4,
+    "actionability": 4,
+    "notes": "Concise and accurate: 5 of 7 issues found with file:line, reproductions and concrete fixes, no false positives; but no severity labels and no explicit verdict (request_changes inferred from the SQLi and live-key findings), missing tests demoted to 'below the bar', and the swallowed exception is missed."
+  }
+}

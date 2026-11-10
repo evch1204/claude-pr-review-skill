@@ -1,0 +1,12 @@
+{
+  "expected_verdict": "approve",
+  "issues": [],
+  "acceptable_nits": [
+    "Floating-point token counts (e.g. 1.5) — acceptable as a nit/question, not a defect",
+    "Suggest a getter/doc for monotonic clock (performance.now) — acceptable as optional suggestion",
+    "Exact float equality in test (1.5) — acceptable as nit; values are exactly representable so the test is correct"
+  ],
+  "decoys": [
+    {"id": "clean-pr", "file": "*", "desc": "This PR is correct, tested, documented, focused, and well described. Any finding labeled blocker / must-fix / request-changes is a false positive. More than ~3 nits is noise."}
+  ]
+}

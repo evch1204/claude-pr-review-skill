@@ -1,0 +1,113 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] idor",
+      "passed": true,
+      "evidence": "(blocking) No ownership check, so any user can drain any account ... nothing checks that `from.owner_id === req.user.id`"
+    },
+    {
+      "text": "Catches [blocker] amount-validation",
+      "passed": true,
+      "evidence": "(blocking) Amount isn't validated, and a negative amount reverses the transfer ... Zero, fractions, strings, `null` ... Also reject `fromId === toId` and missing IDs."
+    },
+    {
+      "text": "Catches [blocker] race-no-transaction",
+      "passed": true,
+      "evidence": "(blocking) Not atomic, so concurrent requests can double-spend and a failure loses money ... Use `db.withTransaction()` with `SELECT ... FOR UPDATE`"
+    },
+    {
+      "text": "Catches [major] missing-csrf",
+      "passed": true,
+      "evidence": "(blocking) No CSRF protection, and the session cookie is `SameSite=None`"
+    },
+    {
+      "text": "Catches [major] missing-account-crash",
+      "passed": true,
+      "evidence": "(blocking) Errors aren't handled, so bad input can crash the server ... an unknown `fromId`: `from.rows[0]` is `undefined`; also: Nonexistent `toId`: the credit `UPDATE` matches 0 rows silently"
+    },
+    {
+      "text": "Catches [minor] unawaited-audit",
+      "passed": true,
+      "evidence": "(blocking) Audit log write is fire-and-forget and outside the transfer ... isn't awaited"
+    },
+    {
+      "text": "Catches [minor] unclear-helper",
+      "passed": true,
+      "evidence": "(should_fix) The `proc` helper is hard to follow. `proc(r, u, d, flag)` has single-letter params, and `flag` is always `true`, so the `{ ok: true }` branch is dead code"
+    },
+    {
+      "text": "Catches [major] no-tests",
+      "passed": true,
+      "evidence": "(should_fix) No tests for the endpoint. `supertest` is already a devDependency."
+    },
+    {
+      "text": "Catches [minor] deps",
+      "passed": true,
+      "evidence": "(should_fix) Unused `lodash` dependency ... The express bump is unrelated ... in its own PR."
+    },
+    {
+      "text": "Catches [minor] unrelated-reformat",
+      "passed": true,
+      "evidence": "(should_fix) `src/utils/format.js` is a reformat only ... `CONTRIBUTING.md` says not to mix reformatting with features. Drop this commit."
+    },
+    {
+      "text": "Catches [minor] pr-hygiene",
+      "passed": true,
+      "evidence": "(should_fix) Commit messages (`wip`, `fix`, `more fixes`) and the PR title/description (\"updates\", empty) don't meet `CONTRIBUTING.md`"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+    },
+    {
+      "text": "Does not flag decoy: parameterized-sql",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: random-uuid",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "failed": 0,
+    "total": 16,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 130.8
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Audit log stores raw, unvalidated req.body",
+        "severity_given": "blocking"
+      },
+      {
+        "desc": "transferId is only the audit-log row id; there is no transfers record",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "BIGINT balance_cents returned as string by pg; convert before comparing",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 0,
+    "actionability": 5,
+    "notes": "Complete and tight: all 11 issues are found, with clear Blocking/Should fix tiers, line references and a drop-in corrected handler. The reformat, express bump and PR hygiene items sit in an unlabeled 'Scope / process' section; I normalized them to should_fix because they are phrased as required actions."
+  }
+}

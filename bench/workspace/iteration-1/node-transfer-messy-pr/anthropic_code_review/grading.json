@@ -1,0 +1,100 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] idor",
+      "passed": true,
+      "evidence": "(blocking) Any logged-in user can move money out of any account. ... nothing checks `account.owner_id === req.user.id`"
+    },
+    {
+      "text": "Catches [blocker] amount-validation",
+      "passed": true,
+      "evidence": "(blocking) The amount is never checked, so a negative amount reverses the transfer ... The route should require a positive integer number of cents."
+    },
+    {
+      "text": "Catches [blocker] race-no-transaction",
+      "passed": true,
+      "evidence": "(blocking) The check and the two balance updates are not in a transaction ... two transfers sent at the same time can both pass the funds check and overdraw the account"
+    },
+    {
+      "text": "Catches [major] missing-csrf",
+      "passed": true,
+      "evidence": "(blocking) No CSRF protection on a route that changes data ... the session cookie is `sameSite=none`"
+    },
+    {
+      "text": "Catches [major] missing-account-crash",
+      "passed": true,
+      "evidence": "(blocking) A bad `fromId` can crash the server process ... `from.rows[0]` is `undefined`; also: a `toId` that doesn't exist makes the credit UPDATE change 0 rows"
+    },
+    {
+      "text": "Catches [minor] unawaited-audit",
+      "passed": true,
+      "evidence": "(blocking) The audit-log `db.query(...)` in `proc()` (L11) has the same problem: it is not awaited, so if it fails it also becomes an unhandled rejection."
+    },
+    {
+      "text": "Catches [minor] unclear-helper",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Catches [major] no-tests",
+      "passed": true,
+      "evidence": "(nit) No tests were added for the new endpoint. (under 'Smaller CONTRIBUTING violations')"
+    },
+    {
+      "text": "Catches [minor] deps",
+      "passed": true,
+      "evidence": "(nit) `lodash` is added to `package.json` but nothing imports it. The `express` bump has nothing to do with transfers."
+    },
+    {
+      "text": "Catches [minor] unrelated-reformat",
+      "passed": true,
+      "evidence": "(nit) Reformatting mixed into a feature PR: the `src/utils/format.js` diff only changes formatting"
+    },
+    {
+      "text": "Catches [minor] pr-hygiene",
+      "passed": true,
+      "evidence": "(nit) the commits are named `wip`, `fix` and `more fixes`, the title is \"updates\" and the description is empty"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+    },
+    {
+      "text": "Does not flag decoy: parameterized-sql",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: random-uuid",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 15,
+    "failed": 1,
+    "total": 16,
+    "pass_rate": 0.94
+  },
+  "timing": {
+    "total_duration_seconds": 166.2
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [],
+    "nit_count": 3,
+    "actionability": 4,
+    "notes": "Concise and accurate on all the security and correctness bugs. Severities are implied only by 'Don't merge this yet' and the 'Smaller' heading, which I read as blocking and nit. It misses the unclear proc() helper, and the missing tests (a major issue) get one clause inside a minor bullet."
+  }
+}

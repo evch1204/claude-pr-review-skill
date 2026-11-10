@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Verdict is approve",
+      "passed": true,
+      "evidence": "review verdict: approve"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "At most 3 nits on a clean PR",
+      "passed": true,
+      "evidence": "0 nits"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 116.1
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [],
+    "nit_count": 0,
+    "actionability": 4,
+    "notes": "The verdict is correct and unambiguous ('No issues found'), and the scope-checked list is accurate. It is useful for a clean PR, but it offers no observations, and the process notes about subagent limits are noise for the author. Verdict inferred as approve from 'No issues found'."
+  }
+}

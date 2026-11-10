@@ -1,0 +1,75 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] xss-comments",
+      "passed": true,
+      "evidence": "(none) Stored XSS in comment bodies. `CommentList` puts `renderMarkdown(c.body)` straight into `dangerouslySetInnerHTML` without calling `sanitize()`. (bug / security)"
+    },
+    {
+      "text": "Catches [major] javascript-url",
+      "passed": true,
+      "evidence": "(none) So does a link like `[click](javascript:alert(1))`, or a URL with a `\"` in it that breaks out of the `href` attribute."
+    },
+    {
+      "text": "Catches [major] effect-deps-regression",
+      "passed": true,
+      "evidence": "(none) The effect's dependency array went from `[postId]` to `[]` ... The `cancelled` guard was also removed ... This is a regression from the code on `main`. (bug)"
+    },
+    {
+      "text": "Catches [minor] key-index",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Catches [minor] quadratic-unique",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Catches [minor] moment-dependency",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Catches [minor] weak-tests",
+      "passed": false,
+      "evidence": "(none)"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": false,
+      "evidence": "xss-comments=none"
+    },
+    {
+      "text": "Does not flag decoy: bio-sanitized",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": false,
+      "evidence": "review verdict: none"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 6,
+    "total": 11,
+    "pass_rate": 0.45
+  },
+  "timing": {
+    "total_duration_seconds": 142.4
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [],
+    "nit_count": 0,
+    "actionability": 3,
+    "notes": "Accurate and concise on the two most important bugs (XSS incl. javascript:/attribute breakout, and the effect regression) with locations and fixes, but misses all minor issues, gives no severity labels and no explicit merge verdict (findings are labeled only 'bug'/'security')."
+  }
+}

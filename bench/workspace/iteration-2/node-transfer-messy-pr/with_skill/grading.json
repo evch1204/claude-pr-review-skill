@@ -1,0 +1,113 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] idor",
+      "passed": true,
+      "evidence": "(blocking) No ownership check on the source account (IDOR): `src/routes/transfers.js:23` ... Nothing compares `owner_id` to `req.user.id`"
+    },
+    {
+      "text": "Catches [blocker] amount-validation",
+      "passed": true,
+      "evidence": "(blocking) `amount` is never validated ... `amount: -5000` passes ... reject the request with 400 unless `Number.isSafeInteger(amount) && amount > 0`. Also reject `fromId === toId`."
+    },
+    {
+      "text": "Catches [blocker] race-no-transaction",
+      "passed": true,
+      "evidence": "(blocking) Transfer is not atomic and the balance check is racy ... Two concurrent transfers of the full balance both read the old balance and both pass"
+    },
+    {
+      "text": "Catches [major] missing-csrf",
+      "passed": true,
+      "evidence": "(blocking) Missing `csrfProtection` on a state-changing route: `src/routes/transfers.js:20` ... The session cookie is `sameSite=none`"
+    },
+    {
+      "text": "Catches [major] missing-account-crash",
+      "passed": true,
+      "evidence": "(blocking) Async handler with no error handling, so one bad id can crash the server ... `from.rows[0]` is undefined and `.balance_cents` throws ... `toId` doesn't exist: the credit UPDATE matches 0 rows, the debit stays"
+    },
+    {
+      "text": "Catches [minor] unawaited-audit",
+      "passed": true,
+      "evidence": "(should_fix) The `audit_log` INSERT isn't awaited ... the audit row is silently lost and the unhandled rejection can take the process down"
+    },
+    {
+      "text": "Catches [minor] unclear-helper",
+      "passed": true,
+      "evidence": "(should_fix) The names `r`, `u`, `d` and `flag` say nothing about what they hold. The only caller passes `flag = true`, so the `{ ok: true }` branch is dead code."
+    },
+    {
+      "text": "Catches [major] no-tests",
+      "passed": true,
+      "evidence": "(should_fix) No tests for the transfer route ... `test/` only has `format.test.js`"
+    },
+    {
+      "text": "Catches [minor] deps",
+      "passed": true,
+      "evidence": "(should_fix) `express` is bumped from `^4.19.2` to `^4.21.1`. `lodash` is added but never `require`d anywhere."
+    },
+    {
+      "text": "Catches [minor] unrelated-reformat",
+      "passed": true,
+      "evidence": "(should_fix) The `format.js` diff is a reformat only: 4-space indent, single quotes and no semicolons, which no other file in the repo uses."
+    },
+    {
+      "text": "Catches [minor] pr-hygiene",
+      "passed": true,
+      "evidence": "(should_fix) The title \"updates\" doesn't say what changed, and the description is empty ... The commits `wip`, `fix` and `more fixes` break the commit-message rule."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+    },
+    {
+      "text": "Does not flag decoy: parameterized-sql",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: random-uuid",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "failed": 0,
+    "total": 16,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 126.2
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Missing amount makes both UPDATEs compute balance_cents +/- NULL, nulling balances (folded into amount-validation)",
+        "severity_given": "blocking"
+      },
+      {
+        "desc": "Audit log stores the raw, unvalidated req.body; store only validated fields",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Lock both rows in consistent order to avoid deadlocks between opposite-direction transfers (fix guidance)",
+        "severity_given": "blocking"
+      }
+    ],
+    "nit_count": 0,
+    "actionability": 5,
+    "notes": "Finds all eleven seeded issues with accurate locations, CONTRIBUTING citations and concrete fixes (including a withTransaction/FOR UPDATE sketch), and explicitly clears the parameterized-SQL decoy. Minor items are somewhat over-ranked as should_fix and missing-csrf/missing-account-crash as blocking, but priority order is clear and the length is justified by the number of real problems."
+  }
+}

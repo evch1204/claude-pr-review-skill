@@ -1,0 +1,105 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] sqli",
+      "passed": true,
+      "evidence": "(blocking) SQL injection in order search: `app/orders.py:11-15` The `q` parameter goes straight into the SQL through f-strings."
+    },
+    {
+      "text": "Catches [blocker] hardcoded-secret",
+      "passed": true,
+      "evidence": "(blocking) Live Stripe secret key committed: `app/payments.py:4` ... rotate the key in Stripe now"
+    },
+    {
+      "text": "Catches [major] pagination-off-by-one",
+      "passed": true,
+      "evidence": "(blocking) Pagination off by one: page 1 skips the first page: `app/orders.py:10` ... Fix: `offset = (page - 1) * page_size`"
+    },
+    {
+      "text": "Catches [major] discount-none-crash",
+      "passed": true,
+      "evidence": "(blocking) Unknown discount code crashes the order endpoint: `app/orders.py:23-24` ... `order_total * None` raises"
+    },
+    {
+      "text": "Catches [major] deleted-customer-crash",
+      "passed": true,
+      "evidence": "(should_fix) Order detail crashes when the customer was deleted: `app/orders.py:34-35`"
+    },
+    {
+      "text": "Catches [minor] swallowed-exception",
+      "passed": true,
+      "evidence": "(should_fix) `except Exception: return False` handles a decline, a network error, and a read timeout the same way"
+    },
+    {
+      "text": "Catches [major] missing-tests",
+      "passed": true,
+      "evidence": "(should_fix) No tests for the new modules: `app/orders.py`, `app/payments.py` The README says \"Every new module needs tests in `tests/`\"."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "sqli=blocking, hardcoded-secret=blocking"
+    },
+    {
+      "text": "Does not flag decoy: secret-env-var-name",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: list-users-limit",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 276.5
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "No Idempotency-Key on charge(): timeout after a successful charge plus retry double-charges",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "page not validated in handler: non-integer -> 500, page<1 -> negative offset after fix",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "LIKE is case-insensitive in SQLite but case-sensitive in Postgres (prod)",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Money handled as float; prefer integer cents/Decimal",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Unrelated list_users change bundled into the PR",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "SECRET_KEY unused and empty default would silently sign with an empty key",
+        "severity_given": "question"
+      }
+    ],
+    "nit_count": 3,
+    "actionability": 5,
+    "notes": "Found all 7 issues with severities that match the key closely (deleted-customer and tests as should-fix, swallowed exception as should-fix rather than minor), clear verdict up front, located findings with reproductions and fixes, and no false positives. One small inaccuracy: it says list_users itself is in the 'Read session secret' commit, but only its test is."
+  }
+}

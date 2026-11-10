@@ -1,0 +1,10 @@
+{
+  "base_branch": "main",
+  "pr_branch": "transfers",
+  "commits": [
+    {"dir": "01-wip", "message": "wip"},
+    {"dir": "02-fix", "message": "fix"},
+    {"dir": "03-more", "message": "more fixes"}
+  ],
+  "pr": { "title": "updates", "body": "" }
+}

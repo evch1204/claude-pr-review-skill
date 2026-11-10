@@ -1,0 +1,20 @@
+{
+  "expected_verdict": "request_changes",
+  "issues": [
+    {"id": "idor", "severity": "blocker", "file": "src/routes/transfers.js", "desc": "No ownership check: any logged-in user can move money out of any account (fromId comes from the request body). CONTRIBUTING requires owner_id === req.user.id (loadOwnedAccount exists in accounts.js). Broken Access Control / IDOR."},
+    {"id": "amount-validation", "severity": "blocker", "file": "src/routes/transfers.js", "desc": "amount is not validated: a negative amount reverses the transfer (pulls money from toId), non-integers/strings/zero are accepted, fromId === toId allowed. CONTRIBUTING requires validating amounts at the route boundary."},
+    {"id": "race-no-transaction", "severity": "blocker", "file": "src/routes/transfers.js", "desc": "Check-then-act balance check plus two separate UPDATEs without db.withTransaction() / SELECT ... FOR UPDATE: concurrent requests can overdraw (double spend), and a failure between the UPDATEs debits without crediting. CONTRIBUTING mandates withTransaction."},
+    {"id": "missing-csrf", "severity": "major", "file": "src/routes/transfers.js", "desc": "POST /transfers does not use csrfProtection, although CONTRIBUTING requires it on every state-changing route and the session cookie is sameSite=none, so a cross-site form can trigger transfers."},
+    {"id": "missing-account-crash", "severity": "major", "file": "src/routes/transfers.js", "desc": "from.rows[0] is undefined for a nonexistent fromId -> TypeError; toId is never checked to exist (money debited into nothing). No try/catch/next(err) unlike accounts.js, so errors become unhandled rejections / hung requests in Express 4."},
+    {"id": "unawaited-audit", "severity": "minor", "file": "src/routes/transfers.js", "desc": "Audit log insert inside proc() is not awaited or error-handled: failures become unhandled promise rejections and the audit record is silently lost."},
+    {"id": "unclear-helper", "severity": "minor", "file": "src/routes/transfers.js", "desc": "proc(r, u, d, flag) has meaningless names, a boolean flag parameter, and mixes ID generation, audit logging and response building (single responsibility); the false branch is dead code."},
+    {"id": "no-tests", "severity": "major", "file": "test/", "desc": "No tests for the new transfer endpoint (money-moving code)."},
+    {"id": "deps", "severity": "minor", "file": "package.json", "desc": "lodash added but never used; express version bump is unrelated to the feature and unexplained."},
+    {"id": "unrelated-reformat", "severity": "minor", "file": "src/utils/format.js", "desc": "Whitespace/quote-only reformat of format.js, unrelated to the feature and inconsistent with the codebase style (2-space indent, double quotes, semicolons). Violates 'keep PRs focused'."},
+    {"id": "pr-hygiene", "severity": "minor", "file": "(PR metadata)", "desc": "Title 'updates', empty description (no what/why/testing), commit messages 'wip'/'fix'/'more fixes' all violate CONTRIBUTING; should be retitled, described, and squashed/reworded."}
+  ],
+  "decoys": [
+    {"id": "parameterized-sql", "file": "src/routes/transfers.js", "desc": "Queries use $1/$2 placeholders; flagging SQL injection is a false positive."},
+    {"id": "random-uuid", "file": "src/routes/transfers.js", "desc": "crypto.randomUUID() for transfer IDs is fine; flagging it as insecure/predictable is a false positive."}
+  ]
+}

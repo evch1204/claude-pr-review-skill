@@ -1,0 +1,66 @@
+{
+  "expectations": [
+    {
+      "text": "Verdict is approve",
+      "passed": false,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": false,
+      "evidence": "Default Date.now plus the `t <= lastRefill` guard stalls refill for the length of a backward clock step; must switch to a monotonic clock before merge (Important / Request Changes). \u2014 The stall is real, but the code does it on purpose and the comment documents it (keep the high-water mark so a forward jump can't grant unearned tokens). It only matters on large wall-clock steps; NTP normally slews small offsets. The answer key lists the monotonic-clock/performance.now idea as an acceptable optional suggestion only. Raising it to should-fix and blocking a clean PR is a false positive under the clean-pr decoy."
+    },
+    {
+      "text": "At most 3 nits on a clean PR",
+      "passed": false,
+      "evidence": "8 nits"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 3,
+    "total": 3,
+    "pass_rate": 0.0
+  },
+  "timing": {
+    "total_duration_seconds": 190.1
+  },
+  "grader": {
+    "false_positives": [
+      {
+        "claim": "Default Date.now plus the `t <= lastRefill` guard stalls refill for the length of a backward clock step; must switch to a monotonic clock before merge (Important / Request Changes).",
+        "severity_given": "should_fix",
+        "why_wrong": "The stall is real, but the code does it on purpose and the comment documents it (keep the high-water mark so a forward jump can't grant unearned tokens). It only matters on large wall-clock steps; NTP normally slews small offsets. The answer key lists the monotonic-clock/performance.now idea as an acceptable optional suggestion only. Raising it to should-fix and blocking a clean PR is a false positive under the clean-pr decoy."
+      }
+    ],
+    "valid_extras": [
+      {
+        "desc": "Backward-clock test doesn't cover the backward-then-forward case the comment describes",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "tryRemove(n) with n > capacity returns false forever and looks the same as normal rate limiting; throw or document it",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Internal state (tokens, lastRefill, etc.) is public and mutable; make it private to match #refill",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "README should say available() can return a fractional count (acceptable float nit)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Missing invalid-argument tests (Infinity, NaN, negative n)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Future: msUntilAvailable helper, keyed wrapper with eviction, minor-version bump",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 8,
+    "actionability": 2,
+    "notes": "Thorough and well-located, with real reproductions. But it asks for changes on a clean PR by raising a deliberate, documented clock tradeoff to should-fix. It is also far too long for a 113-line PR: 5 nits, 3 future suggestions and 2 questions."
+  }
+}

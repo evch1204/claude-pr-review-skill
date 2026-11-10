@@ -1,0 +1,15 @@
+{
+  "expected_verdict": "request_changes",
+  "issues": [
+    {"id": "xss-comments", "severity": "blocker", "file": "src/components/CommentList.tsx", "desc": "Comment bodies (untrusted user input) are rendered via renderMarkdown into dangerouslySetInnerHTML without sanitize(); renderMarkdown does not escape HTML, so <img onerror=...> / <script> executes -> stored XSS. Bio.tsx shows the correct pattern (sanitize())."},
+    {"id": "javascript-url", "severity": "major", "file": "src/markdown.ts", "desc": "Link rule copies the URL into href unchecked, allowing [x](javascript:alert(1)) and attribute breakout via quotes; renderer should escape HTML and allowlist URL schemes (counts if reported as part of the XSS finding)."},
+    {"id": "effect-deps-regression", "severity": "major", "file": "src/components/CommentList.tsx", "desc": "useEffect dependency changed from [postId] to [] and the cancellation guard was removed: navigating to another post keeps showing the old post's comments, and late responses can overwrite state (race). Regression vs base."},
+    {"id": "key-index", "severity": "minor", "file": "src/components/CommentList.tsx", "desc": "key changed from c.id to array index; causes incorrect reconciliation when comments are inserted/reordered. Regression vs base."},
+    {"id": "quadratic-unique", "severity": "minor", "file": "src/components/Participants.tsx", "desc": "Unique-author computation is O(n^2) (filter+findIndex) on threads with thousands of comments, recomputed every render; use a Set/Map (and useMemo)."},
+    {"id": "moment-dependency", "severity": "minor", "file": "package.json", "desc": "Adds moment (large, legacy/maintenance-mode) when the project already uses date-fns and has relativeTime() in src/format.ts doing the same thing; duplicate functionality and unjustified dependency."},
+    {"id": "weak-tests", "severity": "minor", "file": "src/__tests__/markdown.test.ts", "desc": "Only a bold happy-path test; no tests for HTML escaping / malicious input, links, or the components."}
+  ],
+  "decoys": [
+    {"id": "bio-sanitized", "file": "src/components/Bio.tsx", "desc": "Bio uses dangerouslySetInnerHTML but wraps the output in sanitize() (DOMPurify). This is safe; flagging Bio.tsx as XSS is a false positive."}
+  ]
+}

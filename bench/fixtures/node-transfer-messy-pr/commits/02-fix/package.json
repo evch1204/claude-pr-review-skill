@@ -1,0 +1,9 @@
+{
+  "name": "ledger-api",
+  "version": "0.9.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": { "test": "node --test test/", "lint": "eslint ." },
+  "dependencies": { "express": "^4.21.1", "lodash": "^4.17.21", "pg": "^8.12.0" },
+  "devDependencies": { "eslint": "^8.57.0", "supertest": "^7.0.0" }
+}

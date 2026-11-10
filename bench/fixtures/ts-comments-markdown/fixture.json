@@ -1,0 +1,12 @@
+{
+  "base_branch": "main",
+  "pr_branch": "feat/markdown-comments",
+  "commits": [
+    {"dir": "01-markdown", "message": "Render markdown in comments and bios"},
+    {"dir": "02-authors", "message": "Show participant count above comment thread"}
+  ],
+  "pr": {
+    "title": "Markdown in comments + participant count",
+    "body": "Comments and bios now support basic markdown (bold, italic, code, links). Also adds a participants line above the thread. Threads on popular posts can have several thousand comments.\n\nAdded a unit test for the markdown renderer."
+  }
+}

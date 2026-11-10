@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "Verdict is approve",
+      "passed": true,
+      "evidence": "review verdict: approve"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "At most 3 nits on a clean PR",
+      "passed": true,
+      "evidence": "3 nits"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 128.1
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Optional: default to a monotonic clock (performance.now) so a backward wall-clock step doesn't pause refill (acceptable nit from the answer key)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Backward-clock test should also assert that a later forward jump grants no unearned tokens (concrete assertion given and checked: 1.5)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "tryRemove(n) with n > capacity can never succeed; throw RangeError or document it",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 3,
+    "actionability": 5,
+    "notes": "The verdict is correct and immediately clear. It raises three short, located, concrete nits, which is within the clean-PR budget, and correctly treats the clock behavior as an optional nit."
+  }
+}

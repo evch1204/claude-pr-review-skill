@@ -1,0 +1,5 @@
+{
+  "eval_name": "ts-comments-markdown",
+  "prompt": "Can you review this PR before I merge it? Branch `feat/markdown-comments` into `main`.\nPR title: Markdown in comments + participant count\nPR description: Comments and bios now support basic markdown (bold, italic, code, links). Also adds a participants line above the thread. Threads on popular posts can have several thousand comments.\n\nAdded a unit test for the markdown renderer.",
+  "assertions": []
+}

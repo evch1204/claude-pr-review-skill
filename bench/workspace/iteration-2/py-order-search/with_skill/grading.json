@@ -1,0 +1,105 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] sqli",
+      "passed": true,
+      "evidence": "(blocking) SQL injection in order search: `app/orders.py:11-15` `q` goes straight from the query string into the SQL through an f-string."
+    },
+    {
+      "text": "Catches [blocker] hardcoded-secret",
+      "passed": true,
+      "evidence": "(blocking) Live Stripe secret key committed to source: `app/payments.py:4` ... Rotate the key in the Stripe dashboard now"
+    },
+    {
+      "text": "Catches [major] pagination-off-by-one",
+      "passed": true,
+      "evidence": "(blocking) Pagination skips the first page ... `offset = page * page_size` treats them as 0-indexed. Fix: `offset = (page - 1) * page_size`"
+    },
+    {
+      "text": "Catches [major] discount-none-crash",
+      "passed": true,
+      "evidence": "(blocking) Unknown discount code crashes the order endpoint ... `DISCOUNTS.get(code.upper())` returns `None` ... `order_total * None / 100` raises `TypeError`."
+    },
+    {
+      "text": "Catches [major] deleted-customer-crash",
+      "passed": true,
+      "evidence": "(should_fix) Order detail crashes when the customer was deleted ... `customer[\"email\"]` then raises."
+    },
+    {
+      "text": "Catches [minor] swallowed-exception",
+      "passed": true,
+      "evidence": "(should_fix) `except Exception: return False` makes \"card declined\", \"bad key\", and \"network timed out...\" look the same ... Errors also leave no log or trace."
+    },
+    {
+      "text": "Catches [major] missing-tests",
+      "passed": true,
+      "evidence": "(should_fix) No tests for the new modules: `tests/` ... `orders.py` and `payments.py` have none."
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "sqli=blocking, hardcoded-secret=blocking"
+    },
+    {
+      "text": "Does not flag decoy: secret-env-var-name",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: list-users-limit",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 104.1
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "charge() sends no idempotency key, so a timeout after Stripe charged plus a caller retry can double-charge; body built with f-string rather than urlencode (folded into the swallowed-exception item)",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Non-numeric or <1 `page` causes a 500 in handle_search_orders; should return 400 (folded into pagination item)",
+        "severity_given": "blocking"
+      },
+      {
+        "desc": "Money handled as float with round(); inconsistent with integer cents in charge()",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "list_users is unused and not mentioned in the PR description (scope creep)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "SECRET_KEY defaults to empty string and nothing reads it; failing fast on a missing env var would be safer",
+        "severity_given": "question"
+      },
+      {
+        "desc": "handle_get_order exposes customer_email with no authorization check (asked as a question, noting it matches existing handle_get_user)",
+        "severity_given": "question"
+      }
+    ],
+    "nit_count": 2,
+    "actionability": 5,
+    "notes": "Finds all seven seeded issues with correct locations, concrete fixes and reproductions, and avoids both decoys (explicitly praising list_users' bound parameters). It over-ranks pagination and discount to blocking (key: major) and adds two questions alongside the 2 nits, but the verdict and priorities are clear."
+  }
+}

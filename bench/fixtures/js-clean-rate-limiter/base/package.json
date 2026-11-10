@@ -1,0 +1,8 @@
+{
+  "name": "@acme/net-utils",
+  "version": "2.1.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": { "test": "node --test test/" },
+  "engines": { "node": ">=20" }
+}

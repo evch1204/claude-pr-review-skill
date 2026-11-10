@@ -1,0 +1,100 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] xss-comments",
+      "passed": true,
+      "evidence": "(blocking) Stored XSS: comment HTML is never sanitized ... `Bio.tsx` correctly wraps it in `sanitize(...)`, but `CommentList` doesn't."
+    },
+    {
+      "text": "Catches [major] javascript-url",
+      "passed": true,
+      "evidence": "(blocking) `[x](javascript:alert(1))` -> `<a href=\"javascript:alert(1\" \u2026>` ... Allow only `http:`, `https:` and `mailto:` in link hrefs."
+    },
+    {
+      "text": "Catches [major] effect-deps-regression",
+      "passed": true,
+      "evidence": "(blocking) With `[]`, changing `postId` ... never refetches ... Without the cancellation guard, a slow response for an earlier post can overwrite a newer one"
+    },
+    {
+      "text": "Catches [minor] key-index",
+      "passed": true,
+      "evidence": "(should_fix) `key={i}` replaces `key={c.id}` ... Index keys make React reuse the wrong `<li>` when comments are inserted, deleted or reordered"
+    },
+    {
+      "text": "Catches [minor] quadratic-unique",
+      "passed": true,
+      "evidence": "(should_fix) `Participants` is O(n\u00b2) ... At 5,000 comments that's up to about 12.5M comparisons, and it runs on every render. Use a Set"
+    },
+    {
+      "text": "Catches [minor] moment-dependency",
+      "passed": true,
+      "evidence": "(should_fix) New `moment` dependency, even though `date-fns` already covers this ... Use `relativeTime(last.createdAt)` and drop `moment`"
+    },
+    {
+      "text": "Catches [minor] weak-tests",
+      "passed": true,
+      "evidence": "(nit) The test barely covers anything. It only checks bold. ... the most important tests are the security ones"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "xss-comments=blocking"
+    },
+    {
+      "text": "Does not flag decoy: bio-sanitized",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 134.7
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Participants is never imported/rendered, so the feature is not shown",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Markdown applied inside code spans; HTML inside code inserted raw",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Links with ')' in URL are truncated",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "rel=\"noopener\" is pointless without target=_blank; use nofollow ugc for user links",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "'last reply' assumes oldest-first ordering",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "\"1 people\" pluralization",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 6,
+    "actionability": 5,
+    "notes": "Complete coverage of all seeded issues with correct blocking/should-fix split, verified XSS payload table, concrete fixes and a clear summary list of requested changes; proportionate length. Tests rated only as a nit."
+  }
+}

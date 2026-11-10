@@ -1,0 +1,12 @@
+{
+  "base_branch": "main",
+  "pr_branch": "feat/token-bucket",
+  "commits": [
+    {"dir": "01-bucket", "message": "Add TokenBucket rate limiter with injectable clock"},
+    {"dir": "02-docs", "message": "Document TokenBucket in README"}
+  ],
+  "pr": {
+    "title": "Add TokenBucket rate limiter",
+    "body": "Adds a small in-memory token bucket so callers can rate-limit outbound requests (needed by the webhook sender in #212).\n\n- Continuous refill, capped at capacity\n- Injectable clock for deterministic tests\n- Guards against the system clock going backwards\n\nTests: `npm test` (5 new cases, all passing)."
+  }
+}

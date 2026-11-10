@@ -1,0 +1,13 @@
+{
+  "base_branch": "main",
+  "pr_branch": "feature/order-search",
+  "commits": [
+    {"dir": "01-orders", "message": "Add order search, discount codes and order detail endpoint"},
+    {"dir": "02-payments", "message": "Add Stripe charge helper"},
+    {"dir": "03-config", "message": "Read session secret from env; add list_users test"}
+  ],
+  "pr": {
+    "title": "Order search, discount codes, and Stripe charging",
+    "body": "Adds `GET /orders/search?q=&page=` (paginated, 1-indexed pages), discount codes on the order detail endpoint, and a `charge()` helper for Stripe. Also moves the session secret to an env var.\n\nTesting: ran the service locally and searched for a few customers."
+  }
+}

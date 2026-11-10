@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "Verdict is approve",
+      "passed": true,
+      "evidence": "review verdict: approve"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "At most 3 nits on a clean PR",
+      "passed": true,
+      "evidence": "3 nits"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 73.8
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Default `now` to performance.now (monotonic) instead of Date.now; with Date.now a large backwards step stalls refill until wall time catches up (acceptable nit per answer key)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "tryRemove(n) with n > capacity can never succeed and returns false forever; consider throwing RangeError (design suggestion; current behavior is intentional and tested)",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Backwards-clock test does not pin the high-water-mark behavior; resetting lastRefill on a backwards step would still pass",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 3,
+    "actionability": 5,
+    "notes": "Correctly approves the clean PR with nothing above nit, and keeps to three concrete, located, accurate nits (the monotonic-clock one is explicitly acceptable). Short, proportionate, and immediately clear that it can merge."
+  }
+}

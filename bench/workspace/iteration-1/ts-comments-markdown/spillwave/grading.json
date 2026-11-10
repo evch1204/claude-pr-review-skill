@@ -1,0 +1,108 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] xss-comments",
+      "passed": true,
+      "evidence": "(blocking) Security: Stored XSS. Comment markdown is rendered as HTML without sanitizing ... File: src/components/CommentList.tsx:19"
+    },
+    {
+      "text": "Catches [major] javascript-url",
+      "passed": true,
+      "evidence": "(blocking) `[x](javascript:alert(1))` -> `<a href=\"javascript:alert(1\" ...>` (`javascript:` URL scheme passes through) ... allow only `http:`, `https:` and `mailto:` link targets"
+    },
+    {
+      "text": "Catches [major] effect-deps-regression",
+      "passed": true,
+      "evidence": "(blocking) `useEffect` lost its `postId` dependency and its cancellation guard ... it never refetches ... a slow response can arrive after unmount or after a newer request and overwrite state"
+    },
+    {
+      "text": "Catches [minor] key-index",
+      "passed": true,
+      "evidence": "(should_fix) List items are keyed by index instead of `c.id` ... React will reuse the wrong DOM nodes"
+    },
+    {
+      "text": "Catches [minor] quadratic-unique",
+      "passed": true,
+      "evidence": "(should_fix) Performance: O(n\u00b2) participant de-dupe on threads with thousands of comments ... Count unique authors with a Set ... memoize"
+    },
+    {
+      "text": "Catches [minor] moment-dependency",
+      "passed": true,
+      "evidence": "(should_fix) `moment` added even though `date-fns` and a helper already exist ... use `relativeTime(last.createdAt)`"
+    },
+    {
+      "text": "Catches [minor] weak-tests",
+      "passed": true,
+      "evidence": "(should_fix) One happy-path test for a security-sensitive renderer ... Nothing covers italic, code, links, newlines ... or HTML/XSS input"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "xss-comments=blocking"
+    },
+    {
+      "text": "Does not flag decoy: bio-sanitized",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 177.2
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Participants (and Bio) not mounted anywhere; feature ships as dead code",
+        "severity_given": "should_fix"
+      },
+      {
+        "desc": "Markdown applied inside code spans",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Links with ')' in URL truncated",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Pluralization of participant count",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "rel noopener without target=_blank; suggest nofollow ugc",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "Enable react-hooks/exhaustive-deps lint rule",
+        "severity_given": "nit"
+      },
+      {
+        "desc": "'last reply' assumes oldest-first ordering",
+        "severity_given": "question"
+      },
+      {
+        "desc": "Missing .catch on fetch (explicitly noted as pre-existing on main)",
+        "severity_given": "none"
+      }
+    ],
+    "nit_count": 12,
+    "actionability": 3,
+    "notes": "Finds every seeded issue with sensible severities and verified evidence, no false positives, clear Request Changes verdict. Heavily templated and long for a ~47-line PR (boilerplate header, repeated 'Current Code' blocks, duplicated questions), which dilutes scanability."
+  }
+}

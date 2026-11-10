@@ -1,0 +1,113 @@
+{
+  "expectations": [
+    {
+      "text": "Catches [blocker] idor",
+      "passed": true,
+      "evidence": "(blocking) Security: No ownership check, so any user can move money out of any account ... `fromId` comes straight from the request body and is debited without checking `account.owner_id === req.user.id`"
+    },
+    {
+      "text": "Catches [blocker] amount-validation",
+      "passed": true,
+      "evidence": "(blocking) `amount` is never validated, and a negative amount reverses the transfer ... Fractional amount (`0.5`), zero, strings ... `fromId === toId`: not rejected"
+    },
+    {
+      "text": "Catches [blocker] race-no-transaction",
+      "passed": true,
+      "evidence": "(blocking) Check then update with no transaction or lock (race condition and partial writes) ... `CONTRIBUTING.md` says: \"Multi-statement writes must use `db.withTransaction()`\""
+    },
+    {
+      "text": "Catches [major] missing-csrf",
+      "passed": true,
+      "evidence": "(blocking) Security: The route has no CSRF protection ... `session.js` says the cookie is `sameSite=none`"
+    },
+    {
+      "text": "Catches [major] missing-account-crash",
+      "passed": true,
+      "evidence": "(blocking) Errors are never caught, so any logged-in user can crash the server ... `fromId` that doesn't exist: `from.rows[0]` is `undefined`, so `.balance_cents` throws a `TypeError`; also: `toId` that doesn't exist: the credit `UPDATE` matches 0 rows ... the money disappears"
+    },
+    {
+      "text": "Catches [minor] unawaited-audit",
+      "passed": true,
+      "evidence": "(blocking) The audit log write isn't awaited, isn't in the transaction, and can crash the server"
+    },
+    {
+      "text": "Catches [minor] unclear-helper",
+      "passed": true,
+      "evidence": "(should_fix) Readability: `proc(r, u, d, flag)` is hard to follow and has a dead branch ... `flag` is always `true` at the only call site"
+    },
+    {
+      "text": "Catches [major] no-tests",
+      "passed": true,
+      "evidence": "(should_fix) Testing: The new endpoint has no tests"
+    },
+    {
+      "text": "Catches [minor] deps",
+      "passed": true,
+      "evidence": "(should_fix) Dependencies: Unused `lodash` added, and an unrelated `express` bump"
+    },
+    {
+      "text": "Catches [minor] unrelated-reformat",
+      "passed": true,
+      "evidence": "(should_fix) PR Scope / Style: `src/utils/format.js` reformatted to a style the rest of the codebase doesn't use"
+    },
+    {
+      "text": "Catches [minor] pr-hygiene",
+      "passed": true,
+      "evidence": "(should_fix) The title is \"updates\", the description is empty, and the commits are `wip`, `fix` and `more fixes`"
+    },
+    {
+      "text": "Rates every answer-key blocker as blocking",
+      "passed": true,
+      "evidence": "idor=blocking, amount-validation=blocking, race-no-transaction=blocking"
+    },
+    {
+      "text": "Does not flag decoy: parameterized-sql",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Does not flag decoy: random-uuid",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Verdict is request_changes",
+      "passed": true,
+      "evidence": "review verdict: request_changes"
+    },
+    {
+      "text": "No false positives rated should-fix or higher",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "failed": 0,
+    "total": 16,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 190.8
+  },
+  "grader": {
+    "false_positives": [],
+    "valid_extras": [
+      {
+        "desc": "Audit log stores raw req.body instead of validated fields",
+        "severity_given": "blocking"
+      },
+      {
+        "desc": "pg returns BIGINT balance_cents as a string, so the JS funds comparison may be a text comparison; do the check in SQL",
+        "severity_given": "question"
+      },
+      {
+        "desc": "transferId exists only in the audit row; suggests a transfers table and idempotency key",
+        "severity_given": "nit"
+      }
+    ],
+    "nit_count": 6,
+    "actionability": 4,
+    "notes": "Found every seeded issue with correct locations, concrete fixes and sensible severities, and praised both decoys instead of flagging them. It is very long for a 34-line feature (template headers, future suggestions, questions), which slows triage slightly."
+  }
+}

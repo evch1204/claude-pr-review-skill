@@ -1,0 +1,10 @@
+[project]
+name = "orders-service"
+version = "0.3.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
